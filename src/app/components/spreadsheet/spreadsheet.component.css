@@ -1,0 +1,19 @@
+.spreadsheet-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.toolbar {
+  background: #f4f4f4;
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+#hotTable {
+  flex: 1;
+  overflow: auto;
+}
