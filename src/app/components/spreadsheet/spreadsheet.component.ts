@@ -1,7 +1,7 @@
-import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import Handsontable from 'handsontable/base';
+import { Component, ElementRef, AfterViewInit } from '@angular/core';
+import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.css';
-import HyperFormula from 'hyperformula';
+import { HyperFormula } from 'hyperformula';
 
 @Component({
   selector: 'app-spreadsheet',
@@ -10,37 +10,26 @@ import HyperFormula from 'hyperformula';
   styleUrls: ['./spreadsheet.component.css'],
 })
 export class SpreadsheetComponent implements AfterViewInit {
-  @ViewChild('hotTable', { static: true }) hotTable!: ElementRef;
-
   private hot!: Handsontable;
 
-  ngAfterViewInit() {
-    if (!this.hotTable) return; // Ensure the container exists
+  constructor(private elRef: ElementRef) {}
 
-    this.hot = new Handsontable(this.hotTable.nativeElement, {
+  ngAfterViewInit() {
+    const container = this.elRef.nativeElement.querySelector('#spreadsheet');
+
+    // Initialize HyperFormula for formula calculations
+    const hfInstance = HyperFormula.buildEmpty();
+
+    this.hot = new Handsontable(container, {
       data: Array(50)
         .fill(null)
         .map(() => Array(26).fill('')),
       rowHeaders: true,
-      colHeaders: Array.from({ length: 26 }, (_, i) =>
-        String.fromCharCode(65 + i)
-      ),
-      formulas: { engine: HyperFormula.buildEmpty() },
-      width: '100%',
-      height: '90vh', // Takes full screen height
-      manualRowResize: true,
-      manualColumnResize: true,
-      stretchH: 'all',
-      contextMenu: true, // Enable right-click options
+      colHeaders: true,
+      formulas: {
+        engine: hfInstance, // Enable formulas
+      },
       licenseKey: 'non-commercial-and-evaluation',
     });
-  }
-
-  addRow() {
-    this.hot.alter('insert_row_below', this.hot.countRows());
-  }
-
-  addColumn() {
-    this.hot.alter('insert_col_end', this.hot.countCols());
   }
 }
